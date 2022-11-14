@@ -21,6 +21,7 @@ import java.time.Duration;
 
 import de.sormuras.bartholdy.tool.GradleWrapper;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import platform.tooling.support.MavenRepo;
@@ -29,6 +30,7 @@ import platform.tooling.support.Request;
 /**
  * @since 1.9.1
  */
+@Disabled("temporarily")
 class GraalVmStarterTests {
 
 	@Test
