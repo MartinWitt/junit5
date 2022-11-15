@@ -11,20 +11,10 @@
 package org.junit.platform.launcher;
 
 public class TestLauncherDiscoveryListener implements LauncherDiscoveryListener {
+	public static boolean called;
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		return getClass() == obj.getClass();
-	}
-
-	@Override
-	public int hashCode() {
-		return 1;
+	public void launcherDiscoveryStarted(LauncherDiscoveryRequest request) {
+		called = true;
 	}
 }

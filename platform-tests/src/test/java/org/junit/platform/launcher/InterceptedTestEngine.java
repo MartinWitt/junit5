@@ -8,12 +8,15 @@
  * https://www.eclipse.org/legal/epl-v20.html
  */
 
-package org.junit.platform.launcher.core;
+package org.junit.platform.launcher;
 
-/**
- * @since 1.10
- */
-interface CloseableInternalLauncher extends InternalLauncher, AutoCloseable {
-	@Override
-	void close();
+import org.junit.platform.fakes.TestEngineSpy;
+
+public class InterceptedTestEngine extends TestEngineSpy {
+
+	public static final String ID = "intercepted-engine";
+
+	public InterceptedTestEngine() {
+		super(ID);
+	}
 }

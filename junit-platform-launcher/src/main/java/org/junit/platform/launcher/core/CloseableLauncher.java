@@ -10,21 +10,12 @@
 
 package org.junit.platform.launcher.core;
 
+import org.junit.platform.launcher.Launcher;
+
 /**
  * @since 1.10
  */
-class DelegatingCloseableInternalLauncher<T extends InternalLauncher> extends DelegatingInternalLauncher<T>
-		implements CloseableInternalLauncher {
-
-	private final Runnable onClose;
-
-	public DelegatingCloseableInternalLauncher(T delegate, Runnable onClose) {
-		super(delegate);
-		this.onClose = onClose;
-	}
-
+interface CloseableLauncher extends Launcher, AutoCloseable {
 	@Override
-	public final void close() {
-		onClose.run();
-	}
+	void close();
 }
