@@ -28,17 +28,17 @@ import org.junit.platform.launcher.TestPlan;
  */
 class DefaultLauncherSession implements LauncherSession {
 
-	private final DelegatingCloseableLauncher<CloseableLauncher> launcher;
 	private final LauncherSessionListener listener;
+	private final DelegatingCloseableLauncher<CloseableLauncher> launcher;
 
-	DefaultLauncherSession(Supplier<Launcher> launcherSupplier, List<LauncherInterceptor> interceptors,
-			LauncherSessionListener listener) {
+	DefaultLauncherSession(List<LauncherInterceptor> interceptors, Supplier<Launcher> launcherSupplier,
+			Supplier<LauncherSessionListener> listenerSupplier) {
+		this.listener = listenerSupplier.get();
 		CloseableLauncher closeableLauncher = InterceptingClosableLauncher.decorate(launcherSupplier, interceptors);
 		this.launcher = new DelegatingCloseableLauncher<>(closeableLauncher, delegate -> {
 			delegate.close();
 			return ClosedLauncher.INSTANCE;
 		});
-		this.listener = listener;
 		listener.launcherSessionOpened(this);
 	}
 
