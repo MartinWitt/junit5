@@ -33,8 +33,10 @@ class DefaultLauncherSession implements LauncherSession {
 
 	DefaultLauncherSession(List<LauncherInterceptor> interceptors, Supplier<Launcher> launcherSupplier,
 			Supplier<LauncherSessionListener> listenerSupplier) {
-		this.listener = listenerSupplier.get();
-		CloseableLauncher closeableLauncher = InterceptingClosableLauncher.decorate(launcherSupplier, interceptors);
+		LauncherInterceptor interceptor = LauncherInterceptor.composite(interceptors);
+		this.listener = interceptor.intercept(listenerSupplier::get);
+		Launcher launcher = interceptor.intercept(launcherSupplier::get);
+		CloseableLauncher closeableLauncher = new InterceptingClosableLauncher(launcher, interceptor);
 		this.launcher = new DelegatingCloseableLauncher<>(closeableLauncher, delegate -> {
 			delegate.close();
 			return ClosedLauncher.INSTANCE;
