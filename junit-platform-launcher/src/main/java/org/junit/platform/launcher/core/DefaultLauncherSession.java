@@ -28,19 +28,23 @@ import org.junit.platform.launcher.TestPlan;
  */
 class DefaultLauncherSession implements LauncherSession {
 
+	private final LauncherInterceptor interceptor;
 	private final LauncherSessionListener listener;
-	private final DelegatingCloseableLauncher<CloseableLauncher> launcher;
+	private final DelegatingLauncher launcher;
 
-	DefaultLauncherSession(List<LauncherInterceptor> interceptors, Supplier<Launcher> launcherSupplier,
-			Supplier<LauncherSessionListener> listenerSupplier) {
-		LauncherInterceptor interceptor = LauncherInterceptor.composite(interceptors);
-		this.listener = interceptor.intercept(listenerSupplier::get);
-		Launcher launcher = interceptor.intercept(launcherSupplier::get);
-		CloseableLauncher closeableLauncher = new InterceptingClosableLauncher(launcher, interceptor);
-		this.launcher = new DelegatingCloseableLauncher<>(closeableLauncher, delegate -> {
-			delegate.close();
-			return ClosedLauncher.INSTANCE;
-		});
+	DefaultLauncherSession(List<LauncherInterceptor> interceptors, Supplier<LauncherSessionListener> listenerSupplier,
+			Supplier<Launcher> launcherSupplier) {
+		interceptor = LauncherInterceptor.composite(interceptors);
+		Launcher launcher;
+		if (interceptor == LauncherInterceptor.NOOP) {
+			this.listener = listenerSupplier.get();
+			launcher = launcherSupplier.get();
+		}
+		else {
+			this.listener = interceptor.intercept(listenerSupplier::get);
+			launcher = new InterceptingLauncher(interceptor.intercept(launcherSupplier::get), interceptor);
+		}
+		this.launcher = new DelegatingLauncher(launcher);
 		listener.launcherSessionOpened(this);
 	}
 
@@ -55,13 +59,14 @@ class DefaultLauncherSession implements LauncherSession {
 
 	@Override
 	public void close() {
-		if (!launcher.isClosed()) {
-			launcher.close();
+		if (launcher.delegate != ClosedLauncher.INSTANCE) {
+			launcher.delegate = ClosedLauncher.INSTANCE;
 			listener.launcherSessionClosed(this);
+			interceptor.close();
 		}
 	}
 
-	private static class ClosedLauncher implements CloseableLauncher {
+	private static class ClosedLauncher implements Launcher {
 
 		static final ClosedLauncher INSTANCE = new ClosedLauncher();
 
@@ -91,11 +96,6 @@ class DefaultLauncherSession implements LauncherSession {
 		@Override
 		public void execute(TestPlan testPlan, TestExecutionListener... listeners) {
 			throw new PreconditionViolationException("Launcher session has already been closed");
-		}
-
-		@Override
-		public void close() {
-			// do nothing
 		}
 	}
 }

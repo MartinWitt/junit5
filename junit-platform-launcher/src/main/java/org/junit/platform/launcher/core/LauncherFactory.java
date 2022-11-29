@@ -101,7 +101,7 @@ public class LauncherFactory {
 		Preconditions.notNull(config, "LauncherConfig must not be null");
 		LauncherConfigurationParameters configurationParameters = LauncherConfigurationParameters.builder().build();
 		return new DefaultLauncherSession(collectLauncherInterceptors(configurationParameters),
-			() -> createDefaultLauncher(config, configurationParameters), () -> createLauncherSessionListener(config));
+			() -> createLauncherSessionListener(config), () -> createDefaultLauncher(config, configurationParameters));
 	}
 
 	/**

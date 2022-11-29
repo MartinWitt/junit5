@@ -19,15 +19,12 @@ import org.junit.platform.launcher.TestPlan;
 /**
  * @since 1.10
  */
-class InterceptingClosableLauncher extends DelegatingCloseableLauncher<Launcher> {
+class InterceptingLauncher extends DelegatingLauncher {
 
 	private final LauncherInterceptor interceptor;
 
-	InterceptingClosableLauncher(Launcher delegate, LauncherInterceptor interceptor) {
-		super(delegate, it -> {
-			interceptor.close();
-			return it;
-		});
+	InterceptingLauncher(Launcher delegate, LauncherInterceptor interceptor) {
+		super(delegate);
 		this.interceptor = interceptor;
 	}
 

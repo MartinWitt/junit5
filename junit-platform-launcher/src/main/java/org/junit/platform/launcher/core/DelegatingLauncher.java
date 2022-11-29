@@ -19,11 +19,11 @@ import org.junit.platform.launcher.TestPlan;
 /**
  * @since 1.10
  */
-class DelegatingLauncher<T extends Launcher> implements Launcher {
+class DelegatingLauncher implements Launcher {
 
-	protected T delegate;
+	protected Launcher delegate;
 
-	DelegatingLauncher(T delegate) {
+	DelegatingLauncher(Launcher delegate) {
 		this.delegate = delegate;
 	}
 
