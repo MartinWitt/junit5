@@ -1,5 +1,5 @@
 plugins {
-	id("io.spring.nohttp")
+//	id("io.spring.nohttp")
 	id("io.github.gradle-nexus.publish-plugin")
 	`base-conventions`
 	`build-metadata`
@@ -60,6 +60,7 @@ nexusPublishing {
 	}
 }
 
-nohttp {
-	source.exclude("buildSrc/build/generated-sources/**")
-}
+// TODO https://github.com/spring-io/nohttp/issues/58
+//nohttp {
+//	source.exclude("buildSrc/build/generated-sources/**")
+//}
