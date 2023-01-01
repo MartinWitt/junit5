@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ['java', 'javascript']
+        language: ['javascript']
     steps:
     - name: Check out repository
       uses: actions/checkout@v3
